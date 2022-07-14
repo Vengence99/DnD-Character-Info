@@ -1,0 +1,54 @@
+import time
+from bs4 import BeautifulSoup
+from locale import format_string
+from selenium import webdriver
+
+
+
+# 'https://www.dndbeyond.com/characters/72308211/7Ihgdw'
+
+# logic = True
+
+url = input("Place a D&D Beyond character sheet link here: ")
+
+def get_info(url):
+
+    Mods = []
+    wordlist =['Str', 'Dex', 'Con', 'Int', 'Wis', 'Cha', 'StrSave', 'DexSave', 'ConSave', 'IntSave', 'WisSave', 'ChaSave']
+    
+    driver = webdriver.Chrome('C:/Users/virgi/WebDrivers/chromedriver.exe')
+    driver.get(url)
+    html = driver.page_source
+    soup = BeautifulSoup(html, 'html.parser')
+
+
+    numbs = soup.find_all('span',{'class': 'ddbc-signed-number__number ddbc-signed-number__number--dark-mode'})
+    words = soup.find_all('div', {'class': 'ct-skills__col--skill ct-skills__col--skill--dark-mode'})
+    plusminus = soup.find_all('span', {'class': 'ddbc-signed-number__sign ddbc-signed-number__sign--dark-mode'})
+    armor = soup.find_all('div', {'class': 'ddbc-armor-class-box__value ddbc-armor-class-box__value--dark-mode'})
+
+
+    for i in range(len(words)):
+        wordlist.append(words[i].text)
+
+    wordlist.append('Initiative')
+
+    for i in range(31):
+        Mods.append(f'{wordlist[i]}{" "}{plusminus[i].text}{numbs[i].text}')
+
+        AC = (f'{"AC"}{" "}{armor[0].text}')
+
+    print(Mods)
+    print(AC)
+
+
+get_info(url)
+
+# while logic:
+#     get_info(url)
+#     Mods = []
+#     Wordlist =[]
+#     numbs = []
+#     plusminus = []
+#     armor = []
+#     time.sleep(1200)
