@@ -1,4 +1,7 @@
 import time
+import tkinter as tk
+from easygui import *
+from tkinter import simpledialog
 from bs4 import BeautifulSoup
 from locale import format_string
 from selenium import webdriver
@@ -9,14 +12,13 @@ from selenium import webdriver
 
 # logic = True
 
-url = input("Place a D&D Beyond character sheet link here: ")
 
 def get_info(url):
 
     Mods = []
     wordlist =['Str', 'Dex', 'Con', 'Int', 'Wis', 'Cha', 'StrSave', 'DexSave', 'ConSave', 'IntSave', 'WisSave', 'ChaSave']
     
-    driver = webdriver.Chrome('C:/Users/virgi/WebDrivers/chromedriver.exe')
+    driver = webdriver.Chrome('D:\Coding\DnD-Character-Info\chromedriver.exe')
     driver.get(url)
     html = driver.page_source
     soup = BeautifulSoup(html, 'html.parser')
@@ -26,7 +28,9 @@ def get_info(url):
     words = soup.find_all('div', {'class': 'ct-skills__col--skill ct-skills__col--skill--dark-mode'})
     plusminus = soup.find_all('span', {'class': 'ddbc-signed-number__sign ddbc-signed-number__sign--dark-mode'})
     armor = soup.find_all('div', {'class': 'ddbc-armor-class-box__value ddbc-armor-class-box__value--dark-mode'})
+    name = soup.find_all('div', {'class': 'MuiTypography-root MuiTypography-h4 ddb-character-app-sn0l9p'})
 
+    print(name)
 
     for i in range(len(words)):
         wordlist.append(words[i].text)
@@ -35,13 +39,23 @@ def get_info(url):
 
     for i in range(31):
         Mods.append(f'{wordlist[i]}{" "}{plusminus[i].text}{numbs[i].text}')
-
         AC = (f'{"AC"}{" "}{armor[0].text}')
 
-    print(Mods)
-    print(AC)
+    message = "Below is the stats for {}".format(name)
+    title = "{} Stats".format(name)
+    text = ["{}, {}".format(AC, Mods)]
 
 
+    output = textbox(message, title, text)
+
+    print(output)
+    
+    # print(Mods)
+    # print(AC)
+
+ROOT =tk.Tk()
+ROOT.withdraw()
+url = simpledialog.askstring(title = "Link Entry", prompt = "Enter the D&D Beyond Character Sheet link here: ")
 get_info(url)
 
 # while logic:
